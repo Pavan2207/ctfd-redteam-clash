@@ -1,0 +1,78 @@
+
+# CTFd Configuration File
+# Copy this file to config.ini and fill in your values
+
+[server]
+# SECRET_KEY:
+# The secret value used to creation sessions and sign strings. This should be set to a random string.
+SECRET_KEY =
+
+# DATABASE_URL
+# The URI that specifies the username, password, hostname, port, and database
+# Example: postgresql://user:password@host:5432/dbname
+DATABASE_URL =
+
+# DATABASE_HOST
+# The hostname of the database server
+DATABASE_HOST = your-rds-endpoint.rds.amazonaws.com
+
+# DATABASE_PROTOCOL
+# The protocol used (postgresql, mysql+pymysql)
+DATABASE_PROTOCOL = postgresql
+
+# DATABASE_USER
+# The username for the database
+DATABASE_USER = postgres
+
+# DATABASE_PASSWORD
+# The password for the database
+DATABASE_PASSWORD = your_password_here
+
+# DATABASE_PORT
+# The port for the database (5432 for PostgreSQL, 3306 for MySQL)
+DATABASE_PORT = 5432
+
+# DATABASE_NAME
+# The name of the database
+DATABASE_NAME = ctfd
+
+# REDIS_URL (optional)
+# The URL to connect to a Redis server
+REDIS_URL =
+
+[security]
+SESSION_COOKIE_HTTPONLY = true
+SESSION_COOKIE_SAMESITE = Lax
+PERMANENT_SESSION_LIFETIME = 604800
+CROSS_ORIGIN_OPENER_POLICY =
+
+[email]
+MAILFROM_ADDR = noreply@yourdomain.com
+
+[uploads]
+UPLOAD_PROVIDER = filesystem
+
+[logs]
+LOG_FOLDER =
+
+[optional]
+REVERSE_PROXY =
+THEME_FALLBACK =
+TEMPLATES_AUTO_RELOAD =
+SQLALCHEMY_TRACK_MODIFICATIONS =
+SWAGGER_UI =
+UPDATE_CHECK =
+APPLICATION_ROOT =
+
+[management]
+# Preset admin credentials (optional)
+PRESET_ADMIN_NAME =
+PRESET_ADMIN_EMAIL =
+PRESET_ADMIN_PASSWORD =
+
+[oauth]
+OAUTH_CLIENT_ID =
+OAUTH_CLIENT_SECRET =
+
+[extra]
+
