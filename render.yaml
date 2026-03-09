@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: ctfd
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn 'CTFd:create_app()' --bind 0.0.0.0:$PORT --workers 1
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: REDIS_URL
+        sync: false
+    disk:
+      name: ctfd-uploads
+      mountPath: /app/CTFd/uploads
+      sizeGB: 1
+
