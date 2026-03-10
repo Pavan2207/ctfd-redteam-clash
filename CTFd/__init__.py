@@ -32,6 +32,8 @@ from CTFd.utils.migrations import create_database, migrations, stamp_latest_revi
 from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
 from CTFd.utils.user import get_locale
+from CTFd.config import Config as ServerConfig
+from sqlalchemy.engine.url import make_url
 
 __version__ = "3.8.2"
 __channel__ = "oss"
@@ -241,7 +243,19 @@ def create_app(config="CTFd.config.Config"):
             db,
         )
 
-        url = create_database()
+        # Check if we should skip database ping/upgrade (useful for Render.com and similar platforms)
+        skip_db_ping = getattr(ServerConfig, "SKIP_DB_PING", False)
+
+        # Try to create database, but don't fail if database is not ready yet
+        try:
+            url = create_database()
+        except Exception as e:
+            if skip_db_ping:
+                print(f"/*\\ Could not create database (will retry later): {e} /*\\")
+                # Use a placeholder URL to allow app to start
+                url = make_url(app.config.get("SQLALCHEMY_DATABASE_URI", "sqlite:///ctfd.db"))
+            else:
+                raise
 
         # This allows any changes to the SQLALCHEMY_DATABASE_URI to get pushed back in
         # This is mostly so we can force MySQL's charset
@@ -274,6 +288,15 @@ def create_app(config="CTFd.config.Config"):
 
             db.create_all()
             stamp_latest_revision()
+        elif skip_db_ping:
+            # Skip database upgrade when SKIP_DB_PING is true
+            # This is useful on platforms like Render.com where the database may not be ready yet
+            print("/*\\ SKIP_DB_PING is set. Skipping database migration... /*\\")
+            # Still stamp the latest revision to prevent migrations from running on next startup
+            try:
+                stamp_latest_revision()
+            except Exception as e:
+                print(f"/*\\ Could not stamp latest revision: {e} /*\\")
         else:
             # This creates tables instead of db.create_all()
             # Allows migrations to happen properly
@@ -307,10 +330,22 @@ def create_app(config="CTFd.config.Config"):
                 exit()
 
         if not version:
-            utils.set_config("ctf_version", __version__)
+            try:
+                utils.set_config("ctf_version", __version__)
+            except Exception as e:
+                if skip_db_ping:
+                    print(f"/*\\ Could not set ctf_version: {e} /*\\")
+                else:
+                    raise
 
         if not utils.get_config("ctf_theme"):
-            utils.set_config("ctf_theme", DEFAULT_THEME)
+            try:
+                utils.set_config("ctf_theme", DEFAULT_THEME)
+            except Exception as e:
+                if skip_db_ping:
+                    print(f"/*\\ Could not set ctf_theme: {e} /*\\")
+                else:
+                    raise
 
         update_check(force=True)
 
