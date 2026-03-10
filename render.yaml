@@ -12,7 +12,7 @@ services:
       - key: WORKERS
         value: "1"
       - key: SKIP_DB_PING
-        value: "false"
+        value: "true"
     disk:
       name: ctfd-uploads
       mountPath: /var/uploads
