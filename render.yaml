@@ -7,8 +7,10 @@ services:
     envVars:
       - key: DATABASE_URL
         sync: false
+        value: "postgresql://postgres:Nn_1_*xzPyJk?4CT2nU!wYxNF6xp@database-2.cluc8i0ci1ow.ap-southeast-2.rds.amazonaws.com:5432/ctfd"
       - key: SECRET_KEY
         sync: false
+        value: "change-this-to-a-random-secret-key-in-production"
       - key: WORKERS
         value: "1"
       - key: SKIP_DB_PING
@@ -17,4 +19,3 @@ services:
       name: ctfd-uploads
       mountPath: /var/uploads
       sizeGB: 1
-
