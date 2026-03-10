@@ -283,6 +283,11 @@ class ServerConfig(object):
     OAUTH_CLIENT_ID: str = empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_ID"])
     OAUTH_CLIENT_SECRET: str = empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_SECRET"])
 
+    # === RENDER.COM SUPPORT ===
+    # SKIP_DB_PING allows the app to start without immediately connecting to the database
+    # This is useful on platforms like Render.com where the database may not be ready yet
+    SKIP_DB_PING: bool = process_boolean_str(os.getenv("SKIP_DB_PING", "false"))
+
     # === MANAGEMENT ===
     PRESET_ADMIN_NAME: str = empty_str_cast(config_ini["management"].get("PRESET_ADMIN_NAME", "")) if config_ini.has_section("management") else None
     PRESET_ADMIN_EMAIL: str = empty_str_cast(config_ini["management"].get("PRESET_ADMIN_EMAIL", "")) if config_ini.has_section("management") else None
